@@ -80,14 +80,52 @@ public class SintaticAnalyse{
 	}
 
 	public void ParamList(){
-
+		this.Type();
+		this.consume("variable");
+		this.consume("l_paren");
+		this.Type();
+		this.consume("variable");
+		this.consume("r_paren");
 	}
 
 	public void Block(){
-
+		this.consume("l_bracket");
+		this.Expr();
+		this.Stmt();
+		this.consume("r_bracket");
 	}
 
 	public void Stmt(){
+		switch (this.currentToken.getPattern()){
+			case "reserved_word":
+				this.consume("reserved_word");
+				switch(this.currentToken.getPattern()){
+					case "l_paren": //if e while
+						this.Expr();
+						this.consume("r_paren");
+						this.Block();
+						if (this.currentToken.getPattern().isequal("l_paren")){ //if
+							this.consume("l_paren");
+							this.consume("reserved_word");
+							this.Block();
+							this.consume("r_paren");
+						}
+					default: //return, break e continue
+						if (this.Expr()){ //return
+							continue;
+						}
+						this.consume("semicolon");
+				}
+			default:
+				if (this.Loc()){ // loc
+					this.consume("att_op");
+					this.Expr();
+					this.consume("semicolon");
+				} else { //funccall
+					this.FuncCall();
+					this.consume("semicolon");
+				}
+		}
 
 	}
 
@@ -100,19 +138,66 @@ public class SintaticAnalyse{
 	}
 
 	public void Type(){
-
+		switch (this.currentToken.getPattern()){
+			case "int":
+				this.consume("int");
+			case "double":
+				this.consume("double");
+			case "bool":
+				this.consume("bool");
+			default:
+				this.callError();
+				break;
+		}
 	}
 
 	public void Loc(){
-
+		switch (this.currentToken.getPattern()){
+			case "func": 
+				this.consume("func");
+				this.consume("l_paren");
+				this.Expr();
+				this.consume("r_paren");
+			default:
+				this.callError();
+				break;	
+		}
 	}
 
 	public void FuncCall(){
+		switch (this.currentToken.getPattern()){
+			case "func": 
+				this.consume("func");
+				this.consume("l_paren");
+				this.ArgList();
+				this.consume("r_paren");
+			default:
+				this.callError();
+				break;	
+		}
+	}
 
+	public void ArgList(){
+		this.Expr();
+		this.consume("l_paren");
+		this.Expr();
+		this.consume("r_paren");
 	}
 
 	public void Lit(){
-
+		switch (this.currentToken.getPattern()){
+			case "DEC": //decimal
+				this.consume("DEC");
+			case "HEX": //hexadecimal
+				this.consume("HEX");
+			case "string": //string
+				this.consume("string");
+			case "bool": //string
+				this.consume("bool");
+			default:
+				this.callError();
+				break;	
+		}
 	}
 
 	private void callError(){
