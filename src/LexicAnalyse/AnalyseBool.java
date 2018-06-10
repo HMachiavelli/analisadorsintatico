@@ -10,7 +10,7 @@ public class AnalyseBool extends AnalyseContract {
 		this.tokenValue = lexeme;
 		if (lexeme.matches("true")) {
 			this.tokenName = "bool";
-		} else if (lexeme.isequals("false")) {
+		} else if (lexeme.equals("false")) {
 			this.tokenName = "bool";
 		} else {
 			found = false;

@@ -3,16 +3,15 @@
     // Passe o mouse para ver as descrições dos atributos existentes.
     // Para obter mais informações, visite: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
-        
-        {
+    "configurations": [{
             "type": "java",
-            "name": "Debug (Launch)-Main",
+            "name": "Debug (Launch)-Main<analisadorsintatico>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "stopOnEntry": false,
             "mainClass": "Main",
+            "projectName": "analisadorsintatico",
             "args": ""
         },
         {
