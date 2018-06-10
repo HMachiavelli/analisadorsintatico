@@ -30,6 +30,8 @@ public class LexicAnalyse {
     private AnalyseCaracter caracter; 
     //adiciona caracter
     private PlusCaractere addCaracter; 
+    //bool
+    private AnalyseBool bool;
     
     public LexicAnalyse() {
     	this.num = new AnalyseNumber();
@@ -42,7 +44,8 @@ public class LexicAnalyse {
     	this.ignored = new AnalyseIgnored();
     	this.caracter = new AnalyseCaracter();
     	this.addCaracter = new PlusCaractere();
-    	this.tokenTable = new SymbolTable();
+        this.tokenTable = new SymbolTable();
+        this.bool = new AnalyseBool();
     	this.list = new AnalyseList<AnalyseContract>();
     	this.list.add(num);
     	this.list.add(deterministic);

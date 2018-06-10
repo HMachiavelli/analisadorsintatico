@@ -26,9 +26,6 @@ public class Main {
 
         tableToken = lexicAnalyse.analyse(content);
         
-        //ConstructFunction functions = new ConstructFunction(tableToken.getSize());
-        //functions.constructFunctions(tableToken);
-        
         System.out.println(tableToken.toString());
         
         
