@@ -1,20 +1,17 @@
 import java.io.IOException;
-import java.util.Iterator;
-
 import LexicAnalyse.*;
-import LexicAnalyse.Contract.AnalyseContract;
-import SintaticAnalyse.*;
+import SyntacticAnalyse.SyntacticAnalyse;
 
 public class Main {
 
     public static void main(String[] args) {
-    	
+
         SymbolTable tableToken = new SymbolTable();
-        LexicAnalyse lexicAnalyse = new LexicAnalyse(); 
-        
+        LexicAnalyse lexicAnalyse = new LexicAnalyse();
+
         String content = "";
-    	
-    	final String path = "code.txt";
+
+        final String path = "code.txt";
 
         try {
             content = new FileHandler().read(path);
@@ -25,9 +22,11 @@ public class Main {
         }
 
         tableToken = lexicAnalyse.analyse(content);
-        
+
+        SyntacticAnalyse syntaticAnalyse = new SyntacticAnalyse(tableToken);
+
+        syntaticAnalyse.analyse();
+
         System.out.println(tableToken.toString());
-        
-        
     }
 }
