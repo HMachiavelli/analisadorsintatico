@@ -1,102 +1,14 @@
-class Program
-{
-	void main() {
-		Sonda nave = new Sonda();
-		bool move = true;
+Program
+		def int funcao(int a)
+			int a;
 
-		while (move){
-			string direcao = ReadLine();
-			if (direcao == "exit"){
-				move = false;
-				break;
-			}
-			nave.move(direcao);
-		}
-	}
+		int a, b, c;
+		int d, e;
 
-	void Sonda() {
-		int[][]  terreno;
-		int posx;
-		int posy;
-		string dir;
-
-		public Sonda(){
-			terreno = NewArray[100][100];
-			posx = 50;
-			posy = 50;
-			dir = "N";
-			terreno[posx][posy] = 5;
-		}
-
-		public move(string direcao){
-			if (direcao == "frente"){
-				if (dir ="N"){
-					posy = posy + 1;
-				}
-				if (dir ="S"){
-					posy = posy - 1;
-				}
-				if (dir ="L"){
-					posy = posx + 1;
-				}
-				if (dir ="O"){
-					posy = posx - 1;
-				}
-				break;
-			}
-			if (direcao == "tras"){
-				if (dir ="N"){
-					posy = posy - 1;
-				}
-				if (dir ="S"){
-					posy = posy + 1;
-				}
-				if (dir ="L"){
-					posy = posx - 1;
-				}
-				if (dir ="O"){
-					posy = posx + 1;
-				}
-				break;
-			}
-			if (direcao == "esquerda"){
-				if (dir ="N"){
-					dir = "O";
-					posy = posx - 1;
-				}
-				if (dir ="S"){
-					dir = "L";
-					posy = posx + 1;
-				}
-				if (dir ="L"){
-					dir = "N";
-					posy = posy + 1;
-				}
-				if (dir ="O"){
-					dir = "S";
-					posy = posy - 1;
-				}
-				break;
-			}
-			if (direcao == "direita"){
-				if (dir ="N"){
-					dir = "L";
-					posy = posx + 1;
-				}
-				if (dir ="S"){
-					dir = "O";
-					posy = posx - 1;
-				}
-				if (dir ="L"){
-					dir = "S";
-					posy = posy - 1;
-				}
-				if (dir ="O"){
-					dir = "N";
-					posy = posy + 1;
-				}
-				break;
-			}
-		}
-	}
-}
+		
+		
+		a = 10;
+		b = 20;
+		c = 30;
+		
+		e = d ∗ e − 100

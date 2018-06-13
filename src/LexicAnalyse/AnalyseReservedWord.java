@@ -19,7 +19,8 @@ public class AnalyseReservedWord extends AnalyseContract {
         	lexeme.equals("else")        || lexeme.equals("return") ||
         	lexeme.equals("break")       || lexeme.equals("new") ||
         	lexeme.equals("NewArray")    || lexeme.equals("Print") || 
-        	lexeme.equals("ReadInteger") || lexeme.equals("ReadLine")) {
+			lexeme.equals("ReadInteger") || lexeme.equals("ReadLine") ||
+			lexeme.equals("Program")     || lexeme.equals("def")){ 
         		this.tokenName = "reserved_word";
         		this.tokenValue = lexeme;
         		return true;

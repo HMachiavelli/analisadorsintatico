@@ -1,5 +1,6 @@
 import java.io.IOException;
 import LexicAnalyse.*;
+import SyntacticAnalyse.SyntacticAnalyse;
 
 public class Main {
 
@@ -21,6 +22,10 @@ public class Main {
         }
 
         tableToken = lexicAnalyse.analyse(content);
+
+        SyntacticAnalyse syntaticAnalyse = new SyntacticAnalyse(tableToken);
+
+        syntaticAnalyse.analyse();
 
         System.out.println(tableToken.toString());
     }
