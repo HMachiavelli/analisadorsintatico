@@ -335,8 +335,9 @@ public class SyntacticAnalyse {
 		}
 	}
 
-	private void callError() {
-		System.out.println("Atenção! Erro de sintaxe na linha " + this.currentToken.getLine());
+	private void callError(){
+		System.out.println("Atencao! Erro de sintaxe: caracter inesperado '" + this.currentToken.getLexeme() + "' na linha " + this.currentToken.getLine());
+		System.exit(0);
 	}
 
 	/*
