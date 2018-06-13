@@ -209,12 +209,54 @@ public class SyntacticAnalyse {
 	//			FuncCall Expr1 | 	
 	//			Lit Expr1
 	public void Expr() {
-
+		switch (this.currentToken.getPattern()){
+			case "UNOP":
+				this.consume("UNOP");
+				this.Expr();
+				this.Expr1();
+				break;
+			case "l_paren":
+				this.consume("l_paren");
+				this.Expr();
+				this.consume("r_paren");
+				this.Expr1();
+				break;
+			case "reserved_word":
+				switch (this.currentToken.getLexeme()){
+					case "Loc":
+						this.consume("reserved_word");
+						this.Loc();
+						this.Expr1();
+						break;
+					case "FuncCall":
+						this.consume("reserved_word");
+						this.FuncCall();
+						this.Expr1();
+						break;
+					case "Lit":
+						this.consume("reserved_word");
+						this.Lit();
+						this.Expr1();
+						break;
+					default:
+						this.callError();
+						break;
+				}
+			default:
+				this.callError();
+				break;
+		}
 	}
 
 	// Expr1 →	BINOP Expr Expr1
 	public void Expr1() {
-
+		if (this.currentToken.getPattern().equals("BINOP")){	
+			this.consume("BINOP");
+			this.Expr();
+			this.Expr1();
+		} else {
+			this.callError();
+		}
 	}
 
 	// Type →	int | bool | void
