@@ -3,7 +3,7 @@ Var       →	Type ID | Type ID [DEC];
 Func      →	def Type ID(ParamList) Block
 ParamList → Type ID, Type ID
 Block     →	Var Stmt
-Stmt      →	Loc Expr; | 
+Stmt      →	Loc = Expr; | 
             FuncCall; | 
             if(Expr) Block else Block | 
             while(Expr) Block | 

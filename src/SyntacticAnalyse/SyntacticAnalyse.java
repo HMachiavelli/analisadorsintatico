@@ -24,7 +24,7 @@ public class SyntacticAnalyse {
 		if (this.currentToken.getPattern().equals(t)) {
 			this.advance();
 		} else {
-			this.callError();
+			this.callError("consume");
 		}
 	}
 
@@ -33,7 +33,7 @@ public class SyntacticAnalyse {
 			this.consume("reserved_word");
 			this.Program();
 		} else {
-			this.callError();
+			this.callError("analyse");
 		}
 	}
 
@@ -61,7 +61,7 @@ public class SyntacticAnalyse {
 			break;
 
 		default:
-			this.callError();
+			this.callError("program");
 		}
 	}
 
@@ -87,8 +87,26 @@ public class SyntacticAnalyse {
 			this.consume("semicolon");
 
 			break;
+			
+		case "variable":
+			this.consume("variable");
+
+			while (this.currentToken.getPattern().equals("comma")){
+				this.consume("comma");
+				this.consume("variable");
+			}
+
+			if (this.currentToken.getPattern().equals("l_brace")) {
+				this.consume("l_brace");
+				this.consume("reserved_word");
+				this.consume("r_brace");
+			}
+
+			this.consume("semicolon");
+
+			break;
 		default:
-			this.callError();
+			this.callError("var");
 			break;
 		}
 }
@@ -106,7 +124,7 @@ public class SyntacticAnalyse {
 			this.Block();
 			break;
 		default:
-			this.callError();
+			this.callError("func");
 			break;
 		}
 	}
@@ -157,6 +175,14 @@ public class SyntacticAnalyse {
 				}
 
 				this.Loc();
+				this.consume("att_op");
+				// adicionar if para saber se tem EXPR 
+				this.Expr();
+				this.consume("semicolon");
+				break;
+			case "variable": // loc e FunCall
+				this.Loc();
+				this.consume("att_op");
 				// adicionar if para saber se tem EXPR 
 				this.Expr();
 				this.consume("semicolon");
@@ -198,7 +224,7 @@ public class SyntacticAnalyse {
 				}
 				break;
 			default:
-				this.callError();
+				this.callError("stmt");
 				break;
 		}
 	}
@@ -239,11 +265,11 @@ public class SyntacticAnalyse {
 						this.Expr1();
 						break;
 					default:
-						this.callError();
+						this.callError("expr");
 						break;
 				}
 			default:
-				this.callError();
+				this.callError("expr");
 				break;
 		}
 	}
@@ -255,7 +281,7 @@ public class SyntacticAnalyse {
 			this.Expr();
 			this.Expr1();
 		} else {
-			this.callError();
+			this.callError("expr1");
 		}
 	}
 
@@ -266,7 +292,7 @@ public class SyntacticAnalyse {
 			this.consume("reserved_word");
 			break;
 		default:
-			this.callError();
+			this.callError("program");
 			break;
 		}
 	}
@@ -274,8 +300,8 @@ public class SyntacticAnalyse {
 	// Loc →	ID [Expr] | ID
 	public void Loc() {
 		switch (this.currentToken.getPattern()) {
-		case "function":
-			this.consume("function");
+		case "variable":
+			this.consume("variable");
 
 			if (this.currentToken.getPattern().equals("l_brace")){
 				this.consume("l_brace");
@@ -285,7 +311,7 @@ public class SyntacticAnalyse {
 
 			break;
 		default:
-			this.callError();
+			this.callError("loc");
 			break;
 		}
 	}
@@ -300,7 +326,7 @@ public class SyntacticAnalyse {
 			this.consume("r_paren");
 			break;
 		default:
-			this.callError();
+			this.callError("funccall");
 			break;
 		}
 	}
@@ -310,7 +336,7 @@ public class SyntacticAnalyse {
 		this.Expr();
 		while (this.currentToken.getPattern().equals("comma")){
 			this.consume("comma");
-			this.Expr();;
+			this.Expr();
 		}
 	}
 
@@ -330,13 +356,13 @@ public class SyntacticAnalyse {
 			this.consume("bool");
 			break;
 		default:
-			this.callError();
+			this.callError("lit");
 			break;
 		}
 	}
 
-	private void callError(){
-		System.out.println("Atencao! Erro de sintaxe: caracter inesperado '" + this.currentToken.getLexeme() + "' na linha " + this.currentToken.getLine());
+	private void callError(String type){
+		System.out.println("Atencao! Erro de sintaxe: caracter inesperado " + this.currentToken.getLexeme() + " na linha " + this.currentToken.getLine() + " [funcao: " + type +"]");
 		System.exit(0);
 	}
 

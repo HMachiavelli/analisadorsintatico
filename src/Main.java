@@ -25,8 +25,8 @@ public class Main {
 
         SyntacticAnalyse syntaticAnalyse = new SyntacticAnalyse(tableToken);
 
+        System.out.println(tableToken.toString());
         syntaticAnalyse.analyse();
 
-        System.out.println(tableToken.toString());
     }
 }
