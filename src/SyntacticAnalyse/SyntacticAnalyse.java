@@ -139,7 +139,7 @@ public class SyntacticAnalyse {
 		}
 	}
 
-	// Block →	Var* Stmt*
+	// Block →	{ Var* Stmt* }
 	public void Block() {
 		switch (this.currentToken.getLexeme()){
 			case "int":
@@ -166,21 +166,13 @@ public class SyntacticAnalyse {
 	//		    while(Expr) Block | return Expr; | break; | continue;
 	public void Stmt() {
 		switch (this.currentToken.getPattern()) {
-			case "function": // loc e FunCall
+			case "function": //FunCall
 				// FuncCall
-				if (this.getToken(currentIndex+1).getPattern().equals("l_paren")){
-					this.FuncCall();
-					this.consume("semicolon");
-					break;	
-				}
-
-				this.Loc();
-				this.consume("att_op");
-				// adicionar if para saber se tem EXPR 
-				this.Expr();
+				this.FuncCall();
 				this.consume("semicolon");
+
 				break;
-			case "variable": // loc e FunCall
+			case "variable": // loc
 				this.Loc();
 				this.consume("att_op");
 				// adicionar if para saber se tem EXPR 
@@ -192,18 +184,18 @@ public class SyntacticAnalyse {
 				this.consume("reserved_word");
 				switch (this.currentToken.getPattern()) {
 					case "l_paren": // if e while
+						this.consume("l_paren");
 						this.consume("reserved_word");
 						this.Expr();
 						this.consume("r_paren");
 						this.Block();
 						// if
-						if (this.currentToken.getPattern().equals("reserver_word")) { 
+						if (this.currentToken.getLexeme().equals("else")) { 
 							this.consume("reserved_word");
 							this.Block();
 						}
 
 						break;
-
 					default: // return, break e continue
 						if (this.currentToken.getLexeme().equals("return")) { // return
 							this.consume("reserved_word");
@@ -247,27 +239,26 @@ public class SyntacticAnalyse {
 				this.consume("r_paren");
 				this.Expr1();
 				break;
-			case "reserved_word":
-				switch (this.currentToken.getLexeme()){
-					case "Loc":
-						this.consume("reserved_word");
-						this.Loc();
-						this.Expr1();
-						break;
-					case "FuncCall":
-						this.consume("reserved_word");
-						this.FuncCall();
-						this.Expr1();
-						break;
-					case "Lit":
-						this.consume("reserved_word");
-						this.Lit();
-						this.Expr1();
-						break;
-					default:
-						this.callError("expr");
-						break;
-				}
+			case "function":
+				this.consume("function");
+				this.FuncCall();
+				break;
+			case "variable":
+				this.consume("variable");
+				this.Loc();
+				break;
+			case "number":
+				this.consume("number");
+				this.Lit();
+				break;
+			case "string":
+				this.consume("string");
+				this.Lit();
+				break;
+			case "bool":
+				this.consume("bool");
+				this.Lit();
+				break;
 			default:
 				this.callError("expr");
 				break;
