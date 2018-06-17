@@ -14,12 +14,12 @@ public class SymbolTable {
 	public void add(Token token) {
         tokenTable.add(token);
     }
-	
+
 	public Token getToken(int i) {
-		Token object = this.tokenTable.get(i);
-		return object;
+        Token object = this.tokenTable.get(i);
+        return object;
 	}
-	
+
 	public int getSize() {
 		int size = this.tokenTable.size();
 		return size;
@@ -32,9 +32,9 @@ public class SymbolTable {
 	public List<Token> getList() {
         return this.tokenTable;
     }
-	
+
 	public String toString() {
-    	
+
     	String object = "+";
         for (int i = 1; i < 60; i++) {
             if (i == 15) {
@@ -60,7 +60,7 @@ public class SymbolTable {
             object += "-";
         }
         object += "+";
-        
+
         return object;
-    }	
+    }
 }

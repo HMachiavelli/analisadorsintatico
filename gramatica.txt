@@ -2,20 +2,20 @@ Program   →	Var | Func
 Var       →	Type ID | Type ID [DEC];
 Func      →	def Type ID(ParamList) Block
 ParamList → Type ID, Type ID
-Block     →	Var Stmt
-Stmt      →	Loc = Expr; | 
-            FuncCall; | 
-            if(Expr) Block else Block | 
-            while(Expr) Block | 
-            return Expr; | 
-            break; | 
+Block     →	{Var Stmt}
+Stmt      →	Loc = Expr; |
+            FuncCall; |
+            if(Expr) Block else Block |
+            while(Expr) Block |
+            return Expr; |
+            break; |
             continue;
-Expr      →	UNOP Expr Expr1 | 
-            (Expr) Expr1 | 
-            Loc Expr1 | 
-            FuncCall Expr1 | 
-            Lit Expr1
-Expr1     →	BINOP Expr Expr1
+Expr      →	UNOP Expr Expr1 |
+            (Expr) Expr1 |
+            Loc |
+            FuncCall |
+            Lit
+Expr1     →	BINOP Expr
 Type      →	int | bool | void
 Loc       →	ID [Expr] | ID
 FuncCall  →	ID(ArgList)

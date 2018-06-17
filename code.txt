@@ -1,12 +1,6 @@
 Program
-		def int funcao(int a)
-			int a;
-
-		int a, b, c;
-		int d, e;
-
-		a = 10;
-		b = 20;
-		c = 30;
-		
-		e = d ∗ e − 100
+	def int funcao(int a){
+		int a;
+		int b;
+		int d;
+	}
