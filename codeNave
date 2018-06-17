@@ -1,7 +1,6 @@
-class Program
-{
-	void main() {
-		Sonda nave = new Sonda();
+Program
+	def void main() {
+		int nave;
 		bool move = true;
 
 		while (move){
@@ -99,4 +98,4 @@ class Program
 			}
 		}
 	}
-}
+

@@ -11,7 +11,7 @@ public class Main {
 
         String content = "";
 
-        final String path = "code.txt";
+        final String path = "codeNave";
 
         try {
             content = new FileHandler().read(path);

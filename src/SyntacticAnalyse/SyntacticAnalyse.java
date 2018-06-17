@@ -16,8 +16,19 @@ public class SyntacticAnalyse {
 	}
 
 	public void advance() {
-		this.currentIndex++;
-		this.currentToken = this.symbolTable.getToken(this.currentIndex);
+		try{
+			this.currentIndex++;
+			if(this.symbolTable.getList().size() > this.currentIndex){
+				this.currentToken = this.symbolTable.getToken(this.currentIndex);
+			}else{
+				System.out.println("Final");
+				System.exit(0);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.println("Fim de arquivo inesperado");
+			System.exit(0);
+		}
 	}
 
 	public void consume(String t) {
@@ -32,6 +43,9 @@ public class SyntacticAnalyse {
 		if (this.currentToken.getLexeme().equals("Program")) {
 			this.consume("reserved_word");
 			this.Program();
+			if (this.currentIndex != this.symbolTable.getList().size()){
+				this.callError("analyse");
+			}
 		} else {
 			this.callError("analyse");
 		}
@@ -39,29 +53,38 @@ public class SyntacticAnalyse {
 
 	// Program →	Var | Func
 	public void Program() {
-		switch (this.currentToken.getLexeme()) {
-		case "def":
-			this.Func();
-			this.Program();
-			break;
+		switch (this.currentToken.getPattern()) {
+			case "reserved_word":
+				switch (this.currentToken.getLexeme()) {
+				case "def":
+					this.Func();
+					this.Program();
+					break;
 
-		case "int":
-			this.Var();
-			this.Program();
-			break;
+				case "int":
+					this.Var();
+					this.Program();
+					break;
 
-		case "bool":
-			this.Var();
-			this.Program();
-			break;
+				case "bool":
+					this.Var();
+					this.Program();
+					break;
 
-		case "void":
-			this.Var();
-			this.Program();
-			break;
+				case "void":
+					this.Var();
+					this.Program();
+					break;
 
-		default:
-			this.callError("program");
+				default:
+					this.callError("program");
+				}
+
+				break;
+			case "variable":
+				this.Var();
+				this.Program();
+				break;
 		}
 	}
 
@@ -87,7 +110,7 @@ public class SyntacticAnalyse {
 			this.consume("semicolon");
 
 			break;
-			
+
 		case "variable":
 			this.consume("variable");
 
@@ -119,7 +142,9 @@ public class SyntacticAnalyse {
 			this.Type();
 			this.consume("function");
 			this.consume("l_paren");
-			this.ParamList();
+			if(!this.currentToken.getPattern().equals("r_paren")){
+				this.ParamList();
+			}
 			this.consume("r_paren");
 			this.Block();
 			break;
@@ -141,28 +166,49 @@ public class SyntacticAnalyse {
 
 	// Block →	{ Var* Stmt* }
 	public void Block() {
-		switch (this.currentToken.getLexeme()){
-			case "int":
-				this.Var();
-				this.Block();
+		// if(this.currentToken.getPattern().equals("l_bracket")){
+		// 	this.consume("l_bracket");
+		// 	this.Block();
+		// }else if (this.currentToken.getPattern().equals("r_bracket")) {
+		// 	this.consume("r_bracket");
+		// }else{
+		// 	if(this.currentToken.getPattern().equals("variable") || this.currentToken.getPattern().equals("reserved_word")){
+		// 		this.Var();
+		// 		this.Block();
+		// 	}else{
+		// 		this.Stmt();
+		// 		this.Block();
+		// 	}
+		// }
+		switch(this.currentToken.getPattern()){
+			case "l_bracket":
+				this.consume("l_bracket");
+				this.Block2();
+				this.consume("r_bracket");
 				break;
-
-			case "bool":
-				this.Var();
-				this.Block();
-				break;
-
-			case "void":
-				this.Var();
-				this.Block();
-				break;
-
 			default:
-				this.Stmt();
+				this.callError("block");
+				break;
 		}
 	}
 
-	// Stmt →	Loc Expr; | FuncCall; | if(Expr) Block else Block | 
+	private void Block2(){
+		if(!this.currentToken.getPattern().equals("r_bracket")){
+			if(this.currentToken.getPattern().equals("variable")){
+				if(this.currentToken.getLineFile().indexOf('=') > -1){
+					this.Stmt();
+				}else{
+					this.Var();
+				}
+			}else{
+				this.Stmt();
+			}
+
+			this.Block2();
+		}
+	}
+
+	// Stmt →	Loc Expr; | FuncCall; | if(Expr) Block else Block |
 	//		    while(Expr) Block | return Expr; | break; | continue;
 	public void Stmt() {
 		switch (this.currentToken.getPattern()) {
@@ -175,7 +221,7 @@ public class SyntacticAnalyse {
 			case "variable": // loc
 				this.Loc();
 				this.consume("att_op");
-				// adicionar if para saber se tem EXPR 
+				// adicionar if para saber se tem EXPR
 				this.Expr();
 				this.consume("semicolon");
 				break;
@@ -204,15 +250,15 @@ public class SyntacticAnalyse {
 							break;
 
 						} else if (this.currentToken.getLexeme().equals("break")){ // break
-							this.consume("reserved_word");	
-							this.consume("semicolon"); 
+							this.consume("reserved_word");
+							this.consume("semicolon");
 							break;
 
 						} else if (this.currentToken.getLexeme().equals("continue")){ // continue
-							this.consume("reserved_word");	
+							this.consume("reserved_word");
 							this.consume("semicolon");
 							break;
-						}	
+						}
 				}
 				break;
 			default:
@@ -221,10 +267,10 @@ public class SyntacticAnalyse {
 		}
 	}
 
-	// Expr →	UNOP Expr Expr1 | 
-	//			(Expr) Expr1 | 
-	//			Loc Expr1 | 
-	//			FuncCall Expr1 | 	
+	// Expr →	UNOP Expr Expr1 |
+	//			(Expr) Expr1 |
+	//			Loc Expr1 |
+	//			FuncCall Expr1 |
 	//			Lit Expr1
 	public void Expr() {
 		switch (this.currentToken.getPattern()){
@@ -237,7 +283,6 @@ public class SyntacticAnalyse {
 				this.consume("l_paren");
 				this.Expr();
 				this.consume("r_paren");
-				this.Expr1();
 				break;
 			case "function":
 				this.consume("function");
@@ -260,20 +305,18 @@ public class SyntacticAnalyse {
 				this.Lit();
 				break;
 			default:
-				this.callError("expr");
 				break;
+
 		}
 	}
 
 	// Expr1 →	BINOP Expr Expr1
 	public void Expr1() {
-		if (this.currentToken.getPattern().equals("BINOP")){	
+		if (this.currentToken.getPattern().equals("BINOP")){
 			this.consume("BINOP");
-			this.Expr();
-			this.Expr1();
-		} else {
-			this.callError("expr1");
 		}
+
+		this.Expr();
 	}
 
 	// Type →	int | bool | void
@@ -313,7 +356,9 @@ public class SyntacticAnalyse {
 		case "function":
 			this.consume("function");
 			this.consume("l_paren");
-			this.ArgList();
+			if(!this.currentToken.getPattern().equals("r_paren")){
+				this.ArgList();
+			}
 			this.consume("r_paren");
 			break;
 		default:
