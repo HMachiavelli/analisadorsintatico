@@ -5,10 +5,6 @@ import SyntacticAnalyse.SyntacticAnalyse;
 public class Main {
 
     public static void main(String[] args) {
-
-        SymbolTable tableToken = new SymbolTable();
-        LexicAnalyse lexicAnalyse = new LexicAnalyse();
-
         String content = "";
 
         final String path = "codeNave";
@@ -20,6 +16,9 @@ public class Main {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+        SymbolTable tableToken = new SymbolTable();
+        LexicAnalyse lexicAnalyse = new LexicAnalyse();
 
         tableToken = lexicAnalyse.analyse(content);
 

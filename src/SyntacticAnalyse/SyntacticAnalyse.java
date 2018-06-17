@@ -103,7 +103,12 @@ public class SyntacticAnalyse {
 
 			if (this.currentToken.getPattern().equals("l_brace")) {
 				this.consume("l_brace");
-				this.consume("reserved_word");
+				if(!this.currentToken.getPattern().equals("number")){
+					this.consume("number");
+				}else{
+					System.out.println("Tamanho do array inválido na linha " + this.currentToken.getLine());
+					System.exit(0);
+				}
 				this.consume("r_brace");
 			}
 
@@ -121,7 +126,9 @@ public class SyntacticAnalyse {
 
 			if (this.currentToken.getPattern().equals("l_brace")) {
 				this.consume("l_brace");
-				this.consume("reserved_word");
+				if(!this.currentToken.getPattern().equals("r_brace")){
+					this.consume("reserved_word");
+				}
 				this.consume("r_brace");
 			}
 
@@ -166,20 +173,6 @@ public class SyntacticAnalyse {
 
 	// Block →	{ Var* Stmt* }
 	public void Block() {
-		// if(this.currentToken.getPattern().equals("l_bracket")){
-		// 	this.consume("l_bracket");
-		// 	this.Block();
-		// }else if (this.currentToken.getPattern().equals("r_bracket")) {
-		// 	this.consume("r_bracket");
-		// }else{
-		// 	if(this.currentToken.getPattern().equals("variable") || this.currentToken.getPattern().equals("reserved_word")){
-		// 		this.Var();
-		// 		this.Block();
-		// 	}else{
-		// 		this.Stmt();
-		// 		this.Block();
-		// 	}
-		// }
 		switch(this.currentToken.getPattern()){
 			case "l_bracket":
 				this.consume("l_bracket");
@@ -220,47 +213,60 @@ public class SyntacticAnalyse {
 				break;
 			case "variable": // loc
 				this.Loc();
-				this.consume("att_op");
+				this.consume("BINOP");
 				// adicionar if para saber se tem EXPR
 				this.Expr();
 				this.consume("semicolon");
 				break;
 
 			case "reserved_word":
-				this.consume("reserved_word");
-				switch (this.currentToken.getPattern()) {
-					case "l_paren": // if e while
-						this.consume("l_paren");
+				switch(this.currentToken.getLexeme()){
+					case "if":
 						this.consume("reserved_word");
+						this.consume("l_paren");
 						this.Expr();
 						this.consume("r_paren");
 						this.Block();
-						// if
+						// else
 						if (this.currentToken.getLexeme().equals("else")) { 
 							this.consume("reserved_word");
 							this.Block();
 						}
 
 						break;
-					default: // return, break e continue
-						if (this.currentToken.getLexeme().equals("return")) { // return
+					case "while":
+						this.consume("reserved_word");
+						this.consume("l_paren");
+						this.Expr();
+						this.consume("r_paren");
+						this.Block();
+						// else
+						if (this.currentToken.getLexeme().equals("else")) { 
 							this.consume("reserved_word");
-							this.Expr();
-							this.consume("semicolon");
-							break;
-
-						} else if (this.currentToken.getLexeme().equals("break")){ // break
-							this.consume("reserved_word");
-							this.consume("semicolon");
-							break;
-
-						} else if (this.currentToken.getLexeme().equals("continue")){ // continue
-							this.consume("reserved_word");
-							this.consume("semicolon");
-							break;
+							this.Block();
 						}
+
+						break;
+					case "return": // return
+						this.consume("reserved_word");
+						this.Expr();
+						this.consume("semicolon");
+						break;
+
+					case "break": // break
+						this.consume("reserved_word");
+						this.consume("semicolon");
+						break;
+
+					case "continue": // continue
+						this.consume("reserved_word");
+						this.consume("semicolon");
+						break;
+					default:
+						this.consume("reserved_word");
+						break;
 				}
-				break;
+			break;
 			default:
 				this.callError("stmt");
 				break;
@@ -284,30 +290,57 @@ public class SyntacticAnalyse {
 				this.Expr();
 				this.consume("r_paren");
 				break;
+			case "reserved_word":
+				if (this.currentToken.getLexeme().equals("NewArray")){
+					this.Loc();
+				}else if(this.currentToken.getLexeme().equals("ReadLine")){
+					this.FuncCall();
+				}
+				break;
 			case "function":
-				this.consume("function");
+				if(this.auxExpr()){
+					break;
+				}
 				this.FuncCall();
 				break;
 			case "variable":
-				this.consume("variable");
+				if(this.auxExpr()){
+					break;
+				}
 				this.Loc();
 				break;
 			case "number":
-				this.consume("number");
+				if(this.auxExpr()){
+					break;
+				}
 				this.Lit();
 				break;
 			case "string":
-				this.consume("string");
+				if(this.auxExpr()){
+					break;
+				}
 				this.Lit();
 				break;
 			case "bool":
-				this.consume("bool");
+				if(this.auxExpr()){
+					break;
+				}
 				this.Lit();
 				break;
 			default:
 				break;
 
 		}
+	}
+
+	private boolean auxExpr(){
+		if(this.currentToken.getLineFile().indexOf("=") > this.currentToken.getColum()){
+			this.consume(this.currentToken.getPattern());
+			this.Expr1();
+			return true;
+		}
+
+		return false;
 	}
 
 	// Expr1 →	BINOP Expr Expr1
@@ -339,8 +372,26 @@ public class SyntacticAnalyse {
 
 			if (this.currentToken.getPattern().equals("l_brace")){
 				this.consume("l_brace");
-				this.Expr();
+				if(!this.currentToken.getPattern().equals("r_brace")){
+					this.Expr();
+				}
 				this.consume("r_brace");
+			}
+
+			break;
+		case "reserved_word":
+			if(this.currentToken.getLexeme().equals("NewArray")){
+				this.consume("reserved_word");
+
+				if (this.currentToken.getPattern().equals("l_brace")){
+					this.consume("l_brace");
+					if(!this.currentToken.getPattern().equals("r_brace")){
+						this.Expr();
+					}
+					this.consume("r_brace");
+				}
+			}else{
+				this.callError("loc");
 			}
 
 			break;
@@ -360,6 +411,19 @@ public class SyntacticAnalyse {
 				this.ArgList();
 			}
 			this.consume("r_paren");
+			break;
+		case "reserved_word":
+			if(this.currentToken.getLexeme().equals("ReadLine")){
+				this.consume("reserved_word");
+				this.consume("l_paren");
+				if(!this.currentToken.getPattern().equals("r_paren")){
+					this.ArgList();
+				}
+				this.consume("r_paren");
+			}else{
+				this.callError("funccall");
+			}
+
 			break;
 		default:
 			this.callError("funccall");
@@ -384,6 +448,9 @@ public class SyntacticAnalyse {
 			break;
 		case "HEX": // hexadecimal
 			this.consume("HEX");
+			break;
+		case "number": // number
+			this.consume("number");
 			break;
 		case "string": // string
 			this.consume("string");

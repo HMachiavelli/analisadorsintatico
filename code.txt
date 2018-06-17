@@ -1,6 +1,9 @@
 Program
 	def int funcao(int a){
 		int a;
+		int e;
 		int b;
 		int d;
+
+		e = 10;
 	}
