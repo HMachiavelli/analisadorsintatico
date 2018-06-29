@@ -1,2 +1,2 @@
 # analisadorsintatico
-Analisador Sintático da linguagem C
+Analisador Sintático da linguagem Decaf
